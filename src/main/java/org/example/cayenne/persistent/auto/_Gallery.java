@@ -1,5 +1,7 @@
 package org.example.cayenne.persistent.auto;
 
+import java.util.List;
+
 import org.apache.cayenne.CayenneDataObject;
 import org.apache.cayenne.exp.Property;
 import org.example.cayenne.persistent.Painting;
@@ -17,7 +19,7 @@ public abstract class _Gallery extends CayenneDataObject {
     public static final String ID_PK_COLUMN = "ID";
 
     public static final Property<String> NAME = Property.create("name", String.class);
-    public static final Property<Painting> PAINTINGS = Property.create("paintings", Painting.class);
+    public static final Property<List<Painting>> PAINTINGS = Property.create("paintings", List.class);
 
     public void setName(String name) {
         writeProperty("name", name);
@@ -26,12 +28,15 @@ public abstract class _Gallery extends CayenneDataObject {
         return (String)readProperty("name");
     }
 
-    public void setPaintings(Painting paintings) {
-        setToOneTarget("paintings", paintings, true);
+    public void addToPaintings(Painting obj) {
+        addToManyTarget("paintings", obj, true);
     }
-
-    public Painting getPaintings() {
-        return (Painting)readProperty("paintings");
+    public void removeFromPaintings(Painting obj) {
+        removeToManyTarget("paintings", obj, true);
+    }
+    @SuppressWarnings("unchecked")
+    public List<Painting> getPaintings() {
+        return (List<Painting>)readProperty("paintings");
     }
 
 

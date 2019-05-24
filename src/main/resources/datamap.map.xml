@@ -13,6 +13,29 @@
 		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="NAME" type="VARCHAR" length="200"/>
 	</db-entity>
+	<db-entity name="ITEM">
+		<db-attribute name="COST" type="INTEGER"/>
+		<db-attribute name="EXPIRATION_DATE" type="DATE"/>
+		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="NAME" type="VARCHAR" length="200"/>
+		<db-attribute name="TYPE_ID" type="INTEGER"/>
+	</db-entity>
+	<db-entity name="ITEM_TYPE">
+		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="NAME" type="VARCHAR" length="200"/>
+	</db-entity>
+	<db-entity name="ORDER">
+		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="ITEM_ID" type="INTEGER"/>
+	</db-entity>
+	<db-entity name="PACKAGE">
+		<db-attribute name="DATE_AFTER" type="DATE"/>
+		<db-attribute name="DATE_BEGIN" type="DATE"/>
+		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="INVOICE" type="INTEGER"/>
+		<db-attribute name="NAME" type="VARCHAR" length="200"/>
+		<db-attribute name="TRACK" type="VARCHAR" length="15"/>
+	</db-entity>
 	<db-entity name="PAINTING">
 		<db-attribute name="ARTIST_ID" type="INTEGER"/>
 		<db-attribute name="GALLERY_ID" type="INTEGER"/>
@@ -29,20 +52,23 @@
 	<obj-entity name="Painting" className="org.example.cayenne.persistent.Painting" dbEntityName="PAINTING">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
 	</obj-entity>
-	<db-relationship name="paintings" source="ARTIST" target="PAINTING" toMany="false">
+	<db-relationship name="paintings" source="ARTIST" target="PAINTING" toMany="true">
 		<db-attribute-pair source="ID" target="ARTIST_ID"/>
 	</db-relationship>
-	<db-relationship name="untitledRel" source="GALLERY" target="PAINTING" toMany="false">
+	<db-relationship name="untitledRel" source="GALLERY" target="PAINTING" toMany="true">
 		<db-attribute-pair source="ID" target="GALLERY_ID"/>
 	</db-relationship>
-	<db-relationship name="gallerys" source="PAINTING" target="GALLERY" toMany="true">
+	<db-relationship name="TypeRel" source="ITEM" target="ITEM_TYPE" toMany="false">
+		<db-attribute-pair source="TYPE_ID" target="ID"/>
+	</db-relationship>
+	<db-relationship name="gallerys" source="PAINTING" target="GALLERY" toMany="false">
 		<db-attribute-pair source="GALLERY_ID" target="ID"/>
 	</db-relationship>
-	<db-relationship name="untitledRel" source="PAINTING" target="ARTIST" toMany="true">
+	<db-relationship name="untitledRel" source="PAINTING" target="ARTIST" toMany="false">
 		<db-attribute-pair source="ARTIST_ID" target="ID"/>
 	</db-relationship>
 	<obj-relationship name="paintings" source="Artist" target="Painting" deleteRule="Deny" db-relationship-path="paintings"/>
 	<obj-relationship name="paintings" source="Gallery" target="Painting" deleteRule="Deny" db-relationship-path="untitledRel"/>
-	<obj-relationship name="artist" source="Painting" target="Artist" deleteRule="Nullify" db-relationship-path="untitledRel"/>
-	<obj-relationship name="gallerys" source="Painting" target="Gallery" deleteRule="Nullify" db-relationship-path="gallerys"/>
+	<obj-relationship name="artist" source="Painting" target="Artist" db-relationship-path="untitledRel"/>
+	<obj-relationship name="gallerys" source="Painting" target="Gallery" db-relationship-path="gallerys"/>
 </data-map>

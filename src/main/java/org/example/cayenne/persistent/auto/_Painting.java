@@ -1,7 +1,5 @@
 package org.example.cayenne.persistent.auto;
 
-import java.util.List;
-
 import org.apache.cayenne.CayenneDataObject;
 import org.apache.cayenne.exp.Property;
 import org.example.cayenne.persistent.Artist;
@@ -20,8 +18,8 @@ public abstract class _Painting extends CayenneDataObject {
     public static final String ID_PK_COLUMN = "ID";
 
     public static final Property<String> NAME = Property.create("name", String.class);
-    public static final Property<List<Artist>> ARTIST = Property.create("artist", List.class);
-    public static final Property<List<Gallery>> GALLERYS = Property.create("gallerys", List.class);
+    public static final Property<Artist> ARTIST = Property.create("artist", Artist.class);
+    public static final Property<Gallery> GALLERYS = Property.create("gallerys", Gallery.class);
 
     public void setName(String name) {
         writeProperty("name", name);
@@ -30,27 +28,21 @@ public abstract class _Painting extends CayenneDataObject {
         return (String)readProperty("name");
     }
 
-    public void addToArtist(Artist obj) {
-        addToManyTarget("artist", obj, true);
+    public void setArtist(Artist artist) {
+        setToOneTarget("artist", artist, true);
     }
-    public void removeFromArtist(Artist obj) {
-        removeToManyTarget("artist", obj, true);
-    }
-    @SuppressWarnings("unchecked")
-    public List<Artist> getArtist() {
-        return (List<Artist>)readProperty("artist");
+
+    public Artist getArtist() {
+        return (Artist)readProperty("artist");
     }
 
 
-    public void addToGallerys(Gallery obj) {
-        addToManyTarget("gallerys", obj, true);
+    public void setGallerys(Gallery gallerys) {
+        setToOneTarget("gallerys", gallerys, true);
     }
-    public void removeFromGallerys(Gallery obj) {
-        removeToManyTarget("gallerys", obj, true);
-    }
-    @SuppressWarnings("unchecked")
-    public List<Gallery> getGallerys() {
-        return (List<Gallery>)readProperty("gallerys");
+
+    public Gallery getGallerys() {
+        return (Gallery)readProperty("gallerys");
     }
 
 

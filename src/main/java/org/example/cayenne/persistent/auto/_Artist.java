@@ -1,6 +1,7 @@
 package org.example.cayenne.persistent.auto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.apache.cayenne.CayenneDataObject;
 import org.apache.cayenne.exp.Property;
@@ -20,7 +21,7 @@ public abstract class _Artist extends CayenneDataObject {
 
     public static final Property<LocalDate> DATE_OF_BIRTH = Property.create("dateOfBirth", LocalDate.class);
     public static final Property<String> NAME = Property.create("name", String.class);
-    public static final Property<Painting> PAINTINGS = Property.create("paintings", Painting.class);
+    public static final Property<List<Painting>> PAINTINGS = Property.create("paintings", List.class);
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         writeProperty("dateOfBirth", dateOfBirth);
@@ -36,12 +37,15 @@ public abstract class _Artist extends CayenneDataObject {
         return (String)readProperty("name");
     }
 
-    public void setPaintings(Painting paintings) {
-        setToOneTarget("paintings", paintings, true);
+    public void addToPaintings(Painting obj) {
+        addToManyTarget("paintings", obj, true);
     }
-
-    public Painting getPaintings() {
-        return (Painting)readProperty("paintings");
+    public void removeFromPaintings(Painting obj) {
+        removeToManyTarget("paintings", obj, true);
+    }
+    @SuppressWarnings("unchecked")
+    public List<Painting> getPaintings() {
+        return (List<Painting>)readProperty("paintings");
     }
 
 
