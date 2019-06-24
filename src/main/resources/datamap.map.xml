@@ -25,6 +25,7 @@
 		<db-attribute name="NAME" type="VARCHAR" length="200"/>
 	</db-entity>
 	<db-entity name="ORDER">
+		<db-attribute name="DATE" type="TIME"/>
 		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="ITEM_ID" type="INTEGER"/>
 	</db-entity>
@@ -34,6 +35,7 @@
 		<db-attribute name="ID" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
 		<db-attribute name="INVOICE" type="INTEGER"/>
 		<db-attribute name="NAME" type="VARCHAR" length="200"/>
+		<db-attribute name="ORDER_ID" type="INTEGER"/>
 		<db-attribute name="TRACK" type="VARCHAR" length="15"/>
 	</db-entity>
 	<db-entity name="PAINTING">
@@ -49,6 +51,24 @@
 	<obj-entity name="Gallery" className="org.example.cayenne.persistent.Gallery" dbEntityName="GALLERY">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
 	</obj-entity>
+	<obj-entity name="Item" className="org.example.cayenne.persistent.Item" dbEntityName="ITEM">
+		<obj-attribute name="cost" type="int" db-attribute-path="COST"/>
+		<obj-attribute name="expirationDate" type="java.time.LocalDate" db-attribute-path="EXPIRATION_DATE"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
+	</obj-entity>
+	<obj-entity name="ItemType" className="org.example.cayenne.persistent.ItemType" dbEntityName="ITEM_TYPE">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
+	</obj-entity>
+	<obj-entity name="Order" className="org.example.cayenne.persistent.Order" dbEntityName="ORDER">
+		<obj-attribute name="date" type="java.time.LocalTime" db-attribute-path="DATE"/>
+	</obj-entity>
+	<obj-entity name="Package" className="org.example.cayenne.persistent.Package" dbEntityName="PACKAGE">
+		<obj-attribute name="dateAfter" type="java.time.LocalDate" db-attribute-path="DATE_AFTER"/>
+		<obj-attribute name="dateBegin" type="java.time.LocalDate" db-attribute-path="DATE_BEGIN"/>
+		<obj-attribute name="invoice" type="int" db-attribute-path="INVOICE"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
+		<obj-attribute name="track" type="java.lang.String" db-attribute-path="TRACK"/>
+	</obj-entity>
 	<obj-entity name="Painting" className="org.example.cayenne.persistent.Painting" dbEntityName="PAINTING">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
 	</obj-entity>
@@ -58,8 +78,20 @@
 	<db-relationship name="untitledRel" source="GALLERY" target="PAINTING" toMany="true">
 		<db-attribute-pair source="ID" target="GALLERY_ID"/>
 	</db-relationship>
+	<db-relationship name="OrderRel" source="ITEM" target="ORDER" toMany="false">
+		<db-attribute-pair source="ID" target="ITEM_ID"/>
+	</db-relationship>
 	<db-relationship name="TypeRel" source="ITEM" target="ITEM_TYPE" toMany="false">
 		<db-attribute-pair source="TYPE_ID" target="ID"/>
+	</db-relationship>
+	<db-relationship name="ItemRel" source="ORDER" target="ITEM" toMany="true">
+		<db-attribute-pair source="ITEM_ID" target="ID"/>
+	</db-relationship>
+	<db-relationship name="PackageRel" source="ORDER" target="PACKAGE" toMany="false">
+		<db-attribute-pair source="ID" target="ORDER_ID"/>
+	</db-relationship>
+	<db-relationship name="OrderRel" source="PACKAGE" target="ORDER" toMany="true">
+		<db-attribute-pair source="ORDER_ID" target="ID"/>
 	</db-relationship>
 	<db-relationship name="gallerys" source="PAINTING" target="GALLERY" toMany="false">
 		<db-attribute-pair source="GALLERY_ID" target="ID"/>
@@ -69,6 +101,11 @@
 	</db-relationship>
 	<obj-relationship name="paintings" source="Artist" target="Painting" deleteRule="Deny" db-relationship-path="paintings"/>
 	<obj-relationship name="paintings" source="Gallery" target="Painting" deleteRule="Deny" db-relationship-path="untitledRel"/>
+	<obj-relationship name="orderRel" source="Item" target="Order" deleteRule="Nullify" db-relationship-path="OrderRel"/>
+	<obj-relationship name="typeRel" source="Item" target="ItemType" deleteRule="Nullify" db-relationship-path="TypeRel"/>
+	<obj-relationship name="itemRel" source="Order" target="Item" deleteRule="Deny" db-relationship-path="ItemRel"/>
+	<obj-relationship name="packageRel" source="Order" target="Package" deleteRule="Nullify" db-relationship-path="PackageRel"/>
+	<obj-relationship name="orderRel" source="Package" target="Order" deleteRule="Deny" db-relationship-path="OrderRel"/>
 	<obj-relationship name="artist" source="Painting" target="Artist" db-relationship-path="untitledRel"/>
 	<obj-relationship name="gallerys" source="Painting" target="Gallery" db-relationship-path="gallerys"/>
 </data-map>
